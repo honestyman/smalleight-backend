@@ -7,9 +7,10 @@ module.exports = app => {
 
   // Retrieve all campaigns
   router.get('/', companys.getCompanyAll);
-  router.post('/answers', companys.processAnswers);
+  // router.get('/price', companys.getPriceAll);
+  router.post('/answers', auth, companys.processAnswers);
   router.post('/answers_tool', companys.processAnswersTool);
-  // router.get('/tab', items.getTab);
+  router.get('/onecompany', companys.getOneCompany);
   // router.get('/getalltab', items.getAllTab);
   // router.get('/getallcategory', items.getAllCategory);
   // router.post('/like', items.addLike);

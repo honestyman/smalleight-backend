@@ -16,7 +16,8 @@ const Sequelize = db.Sequelize
 // Retrieve all campaigns
 exports.getCompanyAll = async (req, res) => {
   const companys = await Company.findAll({
-    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience]
+    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience],
+    order: [['id', 'ASC']],
   })
     .then((data) => {
       // console.log("111====",data);
@@ -24,25 +25,10 @@ exports.getCompanyAll = async (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({
-        message: err.message || 'Some error occurred while retrieving campaigns',
+        message: err.message || '',
       })
     })
 }
-
-// exports.getPriceAll = async (req, res) => {
-//   const pricesence = await PriceSence.findAll({
-//     include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience]
-//   })
-//     .then((data) => {
-//       // console.log("111====",data);
-//       res.json(data)
-//     })
-//     .catch((err) => {
-//       res.status(500).json({
-//         message: err.message || 'Some error occurred while retrieving campaigns',
-//       })
-//     })
-// }
 
 exports.processAnswers = async (req, res) => {
   console.log(req.body);
@@ -498,4 +484,23 @@ exports.processAnswersTool = async (req, res) => {
     })
   }
 
+}
+
+exports.getOneCompany = async (req, res) => {
+  const companys = await Company.findOne({
+    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience],
+    where:{
+      id:req.query.id
+    },
+    order: [['id', 'ASC']],
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
 }

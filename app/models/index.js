@@ -24,6 +24,12 @@ db.tool = require('./tool.model.js')(sequelize, Sequelize);
 db.industryexperience = require('./industryexperience.model.js')(sequelize, Sequelize);
 db.startdate = require('./startdate.model.js')(sequelize, Sequelize);
 
+db.column = require('./column.model.js')(sequelize, Sequelize);
+db.columnfirstchild = require('./columnfirstchild.model.js')(sequelize, Sequelize);
+db.columnsecondchild = require('./columnsecondchild.model.js')(sequelize, Sequelize);
+db.columncategory = require('./columncategory.model.js')(sequelize, Sequelize);
+
+
 // db.item = require('./item.model.js')(sequelize, Sequelize);
 // db.like = require('./like.model.js')(sequelize, Sequelize);
 // db.play = require('./play.model.js')(sequelize, Sequelize);
@@ -48,6 +54,13 @@ db.company.belongsToMany(db.industryexperience, { through: 'company_industryexpe
 db.industryexperience.belongsToMany(db.company, { through: 'company_industryexperience' });
 
 db.company.belongsTo(db.startdate);
+
+db.column.belongsTo(db.columncategory);
+db.column.belongsToMany(db.columnfirstchild, { through: 'column_firstchild' });
+db.columnfirstchild.belongsToMany(db.columnsecondchild, { through: 'column_firstchild_secondchild' });
+
+
+
 
 
 // db.item.belongsTo(db.category);

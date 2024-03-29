@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/company.routes")(app);
-// require("./app/routes/introduction.routes")(app);
+require("./app/routes/column.routes")(app);
 // require("./app/routes/item.routes")(app);
 // require("./app/routes/users.routes")(app);
 // require("./app/routes/notification.routes")(app);
