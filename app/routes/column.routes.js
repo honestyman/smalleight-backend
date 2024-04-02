@@ -7,6 +7,7 @@ module.exports = app => {
 
   // Retrieve all campaigns
   router.get('/', columns.getColumnsAll);
+  router.get('/allcategory', columns.getColumnsCategoryAll);
   router.get('/onecolumn', columns.getOneColumn);
   // router.post('/updateintroduction', introductions.updateIntroduction);
   

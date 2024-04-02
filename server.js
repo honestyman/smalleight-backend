@@ -49,12 +49,12 @@ app.get("/", (req, res) => {
 
 require("./app/routes/company.routes")(app);
 require("./app/routes/column.routes")(app);
-// require("./app/routes/item.routes")(app);
+require("./app/routes/client.routes")(app);
 // require("./app/routes/users.routes")(app);
 // require("./app/routes/notification.routes")(app);
 
+app.use("/api/auth", require('./app/routes/auth'));
 // app.use("/api/user", require('./app/routes/users'));
-// app.use("/api/auth", require('./app/routes/auth'));
 // app.use("/api/item", require('./app/routes/item'));
 
 // set port, listen for requests

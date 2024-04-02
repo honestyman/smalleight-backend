@@ -9,11 +9,14 @@ module.exports = app => {
   router.get('/', companys.getCompanyAll);
   // router.get('/price', companys.getPriceAll);
   router.post('/answers', auth, companys.processAnswers);
+  router.post('/selected_companise', auth, companys.addSelectedCompanies);
+  router.post('/add_selected_onecompany', auth, companys.addSelectedOneCompany);
+  router.post('/add_selected_multifulcompany', auth, companys.addSelectedMultifulCompany);
   router.post('/answers_tool', companys.processAnswersTool);
   router.get('/onecompany', companys.getOneCompany);
+  router.get('/selected_company', companys.getSelectedCompany);
   // router.get('/getalltab', items.getAllTab);
   // router.get('/getallcategory', items.getAllCategory);
-  // router.post('/like', items.addLike);
   // router.get('/getlike', items.getLike);
   // router.get('/getonelike', items.getOneLike);
   // router.get('/getplay', items.getPlay);

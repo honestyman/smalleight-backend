@@ -16,6 +16,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.client = require('./client.model.js')(sequelize, Sequelize);
 db.company = require('./company.model.js')(sequelize, Sequelize);
 db.pricesence = require('./pricesence.model.js')(sequelize, Sequelize);
 db.solvedissue = require('./solvedissue.model.js')(sequelize, Sequelize);
@@ -30,7 +31,7 @@ db.columnsecondchild = require('./columnsecondchild.model.js')(sequelize, Sequel
 db.columncategory = require('./columncategory.model.js')(sequelize, Sequelize);
 
 
-// db.item = require('./item.model.js')(sequelize, Sequelize);
+db.campaign = require('./campaign.model.js')(sequelize, Sequelize);
 // db.like = require('./like.model.js')(sequelize, Sequelize);
 // db.play = require('./play.model.js')(sequelize, Sequelize);
 // db.download = require('./download.model.js')(sequelize, Sequelize);
@@ -53,11 +54,16 @@ db.tool.belongsToMany(db.company, { through: 'company_tool' });
 db.company.belongsToMany(db.industryexperience, { through: 'company_industryexperience' });
 db.industryexperience.belongsToMany(db.company, { through: 'company_industryexperience' });
 
+db.company.belongsToMany(db.campaign, { through: 'company_campaign' });
+db.campaign.belongsToMany(db.company, { through: 'company_campaign' });
+
 db.company.belongsTo(db.startdate);
 
-db.column.belongsTo(db.columncategory);
 db.column.belongsToMany(db.columnfirstchild, { through: 'column_firstchild' });
 db.columnfirstchild.belongsToMany(db.columnsecondchild, { through: 'column_firstchild_secondchild' });
+
+db.column.belongsToMany(db.columncategory, { through: 'column_columncategory' });
+db.columncategory.belongsToMany(db.column, { through: 'column_columncategory' });
 
 
 

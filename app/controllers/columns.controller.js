@@ -4,7 +4,7 @@ const db = require('../models')
 const Column = db.column
 const ColumnFirstChild = db.columnfirstchild
 const ColumnSecondChild = db.columnsecondchild
-// const CampaignQueries = db.campaignQueries
+const ColumnCategory = db.columncategory
 // const CampaignInfo = db.campaignInfo
 // const AdgroupInfo = db.adgroupInfo
 // const AdInfo = db.adInfo
@@ -19,9 +19,24 @@ exports.getColumnsAll = (req, res) => {
       {
         model:ColumnFirstChild,
         include: ColumnSecondChild
-      }
+      },ColumnCategory
     ] ,
     order: [['id', 'DESC']],
+    // group: "campaignId",
+  })
+    .then((data) => {
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || 'Some error occurred while retrieving campaigns',
+      })
+    })
+}
+
+exports.getColumnsCategoryAll = (req, res) => {
+  ColumnCategory.findAll({
+    order: [['id', 'ASC']],
     // group: "campaignId",
   })
     .then((data) => {

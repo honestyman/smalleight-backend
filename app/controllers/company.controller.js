@@ -2,13 +2,16 @@ const axios = require('axios')
 const { format } = require('date-fns')
 const db = require('../models')
 const { query } = require('express-validator')
+const cookieSession = require('cookie-session')
 const Company = db.company
+const Client =db.client
 const Solvedissue = db.solvedissue
 const Startdate = db.startdate
 const Expertise = db.expertise
 const Tool = db.tool
 const Pricesence = db.pricesence
 const Industryexperience = db.industryexperience
+const Campaign = db.campaign
 
 const Op = db.Sequelize.Op
 const Sequelize = db.Sequelize
@@ -16,7 +19,7 @@ const Sequelize = db.Sequelize
 // Retrieve all campaigns
 exports.getCompanyAll = async (req, res) => {
   const companys = await Company.findAll({
-    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience],
+    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
     order: [['id', 'ASC']],
   })
     .then((data) => {
@@ -33,6 +36,7 @@ exports.getCompanyAll = async (req, res) => {
 exports.processAnswers = async (req, res) => {
   console.log(req.body);
   try {
+
     let result = [];
     // step1--------------------
     const companys = await Company.findAll({
@@ -274,7 +278,7 @@ exports.processAnswers = async (req, res) => {
      if(result.length){
       for(let i=0;i<result.length;i++){
         result[i] = await Company.findOne({
-          include: [Pricesence,Expertise],
+          include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
           where: {
             id: result[i].id
           }
@@ -282,10 +286,25 @@ exports.processAnswers = async (req, res) => {
       }
      }else{
       result = await Company.findAll({
-        include: [Pricesence,Expertise],      
+        include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],    
       });
      }
-     console.log("result", result);
+    //  console.log("result", result);
+     
+     const client = await Client.create({
+       name:req.body.name,
+       email:req.body.email,
+       company:req.body.companyName,
+       phoneNumber:req.body.phoneNumber,
+       questionContent:req.body.questionContent,
+       service:req.body.service,
+       purpose:req.body.purpose.toString(),
+       measures:req.body.measures.toString(),
+       currentMeasures:req.body.currentMeasures.toString(),
+       startDate:req.body.startDate,
+       budget:req.body.budget
+     })
+    
     return res.status(200).json(result)
   } catch (error) {
     res.status(500).json({
@@ -295,6 +314,42 @@ exports.processAnswers = async (req, res) => {
 
 }
 
+exports.addSelectedCompanies = async (req, res) => {
+  console.log(req.body);
+  try {
+     const client = await Client.findOne({
+      where:{
+        name:req.body.name,
+        email:req.body.email
+      },
+      order: [['id', 'DESC']],
+     });
+     console.log(client);
+     const selectedCompaniesName=[];
+     console.log("---", req.body.selectedCompanise.length);
+     for(let i=0;i<req.body.selectedCompanise.length;i++){
+      const company=await Company.findOne({
+        where:{
+          id:req.body.selectedCompanise[i]
+        }
+      });
+      if(company){
+        selectedCompaniesName[i]=company.name;
+      }
+     }
+     console.log(selectedCompaniesName);
+     client.selectedCompany=selectedCompaniesName.toString();
+     client.save();
+    return res.status(200).json({
+      message: "success"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+}
+
 exports.processAnswersTool = async (req, res) => {
   console.log(req.body);
   try {
@@ -302,9 +357,6 @@ exports.processAnswersTool = async (req, res) => {
     // step1--------------------
     const companys = await Company.findAll({
       include: Tool
-      // include: Expertise,
-      // include: Startdate,
-      // include: Pricesence,
     });
     var result1Len = 0;
     const result1 = [];
@@ -465,7 +517,7 @@ exports.processAnswersTool = async (req, res) => {
      if(result.length){
       for(let i=0;i<result.length;i++){
         result[i] = await Company.findOne({
-          include: [Pricesence,Tool],
+          include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
           where: {
             id: result[i].id
           }
@@ -473,10 +525,21 @@ exports.processAnswersTool = async (req, res) => {
       }
      }else{
       result = await Company.findAll({
-        include: [Pricesence,Tool],      
+        include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],    
       });
      }
-     console.log("result", result);
+     const client = await Client.create({
+      name:req.body.name,
+      email:req.body.email,
+      company:req.body.companyName,
+      phoneNumber:req.body.phoneNumber,
+      questionContent:req.body.questionContent,
+      service:req.body.service,
+      tools:req.body.findTool.toString(),
+      startDate:req.body.startDate,
+      budget:req.body.budget
+    })
+
     return res.status(200).json(result)
   } catch (error) {
     res.status(500).json({
@@ -488,7 +551,7 @@ exports.processAnswersTool = async (req, res) => {
 
 exports.getOneCompany = async (req, res) => {
   const companys = await Company.findOne({
-    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience],
+    include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
     where:{
       id:req.query.id
     },
@@ -503,4 +566,95 @@ exports.getOneCompany = async (req, res) => {
         message: err.message || '',
       })
     })
+}
+
+exports.getSelectedCompany = async (req, res) => {
+  console.log(req.query)
+  try {
+    const idArray=req.query.ids.split("&");
+    const companies=[];
+    console.log(idArray)
+    for(let i=0;i<idArray.length;i++){
+      companies[i] = await Company.findOne({
+        include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
+        where:{
+          id:idArray[i]
+        }
+      });
+    }
+    return res.status(200).json(companies);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+}
+
+exports.addSelectedOneCompany = async (req, res) => {
+  console.log(req.body);
+  try {
+    const company = await Company.findOne({
+      where:{
+        id:req.body.companyId
+      },
+      order: [['id', 'ASC']],
+    });
+    const client = await Client.create({
+      name:req.body.name,
+      email:req.body.email,
+      company:req.body.companyName,
+      phoneNumber:req.body.phoneNumber,
+      questionContent:req.body.questionContent,
+      selectedCompany:company.name
+    });
+    return res.status(200).json({
+      message:"success"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+
+}
+
+exports.addSelectedMultifulCompany = async (req, res) => {
+  console.log(req.body);
+  try {
+    var companyName="";
+    if(req.body.companyIds){
+      const idArray = req.body.companyIds.split("&");
+      console.log(idArray);
+      for(let i=0;i<idArray.length;i++){
+        var company = await Company.findOne({
+          where:{
+            id:idArray[i]
+          },
+          order: [['id', 'ASC']],
+        });
+        companyName+=company.name;
+        if(idArray[i+1]){
+          companyName+=",";
+        }
+      }
+    }
+    console.log(companyName)
+    
+    const client = await Client.create({
+      name:req.body.name,
+      email:req.body.email,
+      company:req.body.companyName,
+      phoneNumber:req.body.phoneNumber,
+      questionContent:req.body.questionContent,
+      selectedCompany:companyName
+    });
+    return res.status(200).json({
+      message:"success"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+
 }
