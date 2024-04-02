@@ -5,6 +5,7 @@ const OneSignal = require('onesignal-node');
 const { ONE_SIGNAL_CONFIG }=require("../config/app.config");
 
 const Client = db.client
+const Query = db.query
 
 const Op = db.Sequelize.Op
 const Sequelize = db.Sequelize
@@ -26,6 +27,26 @@ exports.getAll = (req, res) => {
     })
 }
 
+exports.addQuery = async (req, res) => {
+  console.log(req.body);  
+  
+  try {
+    const query = await Query.create({
+      kind: req.body.kind,
+      name: req.body.name,
+      company: req.body.companyName,
+      email: req.body.email,
+      questionContent: req.body.questionContent
+    });
+    
+    return res.status(200).json({ message: "success" });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+}
 // exports.getOneNotification = async (req, res) => {
 //   // console.log(req.query);
 //   const notifiaction = await Notification.findOne({
@@ -44,25 +65,7 @@ exports.getAll = (req, res) => {
 //     })
 // }
 
-// exports.addNotification = async (req, res) => {
-//   // console.log(req.body);  
-  
-//   try {
-//     const notification = await Notification.create({
-//       japanesetext: req.body.japanesetext,
-//       englishtext: req.body.englishtext,
-//       send_date:req.body.senddate,
-//       send_time:req.body.sendtime
-//     });
-    
-//     return res.status(200).json("success")
 
-//   } catch (error) {
-//     res.status(500).json({
-//       message: error.message || ''
-//     })
-//   }
-// }
 
 // exports.updateNotification = async (req, res) => {
 //   // console.log("111", req.body); 

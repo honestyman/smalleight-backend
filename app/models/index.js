@@ -32,9 +32,9 @@ db.columncategory = require('./columncategory.model.js')(sequelize, Sequelize);
 
 
 db.campaign = require('./campaign.model.js')(sequelize, Sequelize);
-// db.like = require('./like.model.js')(sequelize, Sequelize);
-// db.play = require('./play.model.js')(sequelize, Sequelize);
-// db.download = require('./download.model.js')(sequelize, Sequelize);
+db.news = require('./news.model.js')(sequelize, Sequelize);
+db.newschild = require('./newschild.model.js')(sequelize, Sequelize);
+db.query = require('./query.model.js')(sequelize, Sequelize);
 // db.give = require('./give.model.js')(sequelize, Sequelize);
 // db.statehistory = require('./statehistory.model.js')(sequelize, Sequelize);
 // db.notification = require('./notification.model.js')(sequelize, Sequelize);
@@ -64,6 +64,9 @@ db.columnfirstchild.belongsToMany(db.columnsecondchild, { through: 'column_first
 
 db.column.belongsToMany(db.columncategory, { through: 'column_columncategory' });
 db.columncategory.belongsToMany(db.column, { through: 'column_columncategory' });
+
+db.news.belongsToMany(db.newschild, { through: 'news_newschild' });
+
 
 
 

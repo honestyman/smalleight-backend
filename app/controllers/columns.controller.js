@@ -56,7 +56,7 @@ exports.getOneColumn = (req, res) => {
       {
         model:ColumnFirstChild,
         include: ColumnSecondChild
-      }
+      },ColumnCategory
     ] ,
     where:{
       id:req.query.id      

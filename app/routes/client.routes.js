@@ -1,4 +1,6 @@
 
+const auth = require("../middleware/auth.js");
+
 module.exports = app => {
   const client = require("../controllers/client.controller.js");
   
@@ -7,7 +9,7 @@ module.exports = app => {
   // Retrieve all campaigns
   router.get('/', client.getAll);
   // router.get('/getonenotification', notification.getOneNotification);
-  // router.post('/addnotification', notification.addNotification);
+  router.post('/postquery', auth, client.addQuery);
 
   // // router.get('/sendnotification', notification.sendNotification);
   

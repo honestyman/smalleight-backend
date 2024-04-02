@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
 require("./app/routes/company.routes")(app);
 require("./app/routes/column.routes")(app);
 require("./app/routes/client.routes")(app);
-// require("./app/routes/users.routes")(app);
+require("./app/routes/news.routes")(app);
 // require("./app/routes/notification.routes")(app);
 
 app.use("/api/auth", require('./app/routes/auth'));
