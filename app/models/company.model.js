@@ -27,6 +27,9 @@ module.exports = (sequelize, Sequelize) => {
     description:{
       type:Sequelize.STRING
     },
+    publishForm:{
+      type:Sequelize.STRING
+    }
   });
 
   return Company;

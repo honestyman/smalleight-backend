@@ -658,3 +658,123 @@ exports.addSelectedMultifulCompany = async (req, res) => {
   }
 
 }
+
+exports.deleteOneCompany = async (req, res) => {
+  console.log( req.query.id);
+  try {
+    const company = await Company.findOne({
+      where: {
+        id: req.query.id
+      },
+      order:[['id','DESC']],
+    });
+    company.destroy();
+
+    return res.status(200).json({ message:"Success" })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+}
+
+exports.getCampaignAll = async (req, res) => {
+  const campaigns = await Campaign.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+exports.getExpertiseAll = async (req, res) => {
+  const expertise = await Expertise.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+
+exports.getToolsAll = async (req, res) => {
+  const tool = await Tool.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+
+exports.getSolvedissueAll = async (req, res) => {
+  const solvedissue = await Solvedissue.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+exports.getPricesenceAll = async (req, res) => {
+  const pricesence = await Pricesence.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+exports.getStartDateAll = async (req, res) => {
+  const startdate = await Startdate.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}
+exports.getIndustryExperienceAll = async (req, res) => {
+  const industryexperience = await Industryexperience.findAll({
+    order: [['id', 'ASC']]
+  })
+    .then((data) => {
+      // console.log("111====",data);
+      res.json(data)
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err.message || '',
+      })
+    })
+}

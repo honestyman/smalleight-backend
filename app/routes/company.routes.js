@@ -15,7 +15,16 @@ module.exports = app => {
   router.post('/answers_tool', companys.processAnswersTool);
   router.get('/onecompany', companys.getOneCompany);
   router.get('/selected_company', companys.getSelectedCompany);
-  // router.get('/getalltab', items.getAllTab);
+  router.delete('/deleteonecompany', companys.deleteOneCompany);
+
+  router.get('/allcampaign', companys.getCampaignAll);
+  router.get('/allexpertise', companys.getExpertiseAll);
+  router.get('/alltools', companys.getToolsAll);
+  router.get('/allsolvedissue', companys.getSolvedissueAll);
+  router.get('/allpricesence', companys.getPricesenceAll);
+  router.get('/allstartdate', companys.getStartDateAll);
+  router.get('/allindustryexperience', companys.getIndustryExperienceAll);
+
   // router.get('/getallcategory', items.getAllCategory);
   // router.get('/getlike', items.getLike);
   // router.get('/getonelike', items.getOneLike);

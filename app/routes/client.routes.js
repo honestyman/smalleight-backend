@@ -8,13 +8,14 @@ module.exports = app => {
 
   // Retrieve all campaigns
   router.get('/', client.getAll);
-  // router.get('/getonenotification', notification.getOneNotification);
+  router.get('/getoneclient', client.getOneClient);
   router.post('/postquery', auth, client.addQuery);
+  router.post('/postwanted', auth, client.addWantedCompany);
 
   // // router.get('/sendnotification', notification.sendNotification);
   
   // router.post('/updatenotification', notification.updateNotification);
-  // router.delete('/deleteone', notification.deleteOne);  
+  router.delete('/deleteoneclient', client.deleteOne);  
 
 
   app.use("/api/clients", router);

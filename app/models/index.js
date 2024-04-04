@@ -35,7 +35,7 @@ db.campaign = require('./campaign.model.js')(sequelize, Sequelize);
 db.news = require('./news.model.js')(sequelize, Sequelize);
 db.newschild = require('./newschild.model.js')(sequelize, Sequelize);
 db.query = require('./query.model.js')(sequelize, Sequelize);
-// db.give = require('./give.model.js')(sequelize, Sequelize);
+db.wantedcompany = require('./wantedcompany.model.js')(sequelize, Sequelize);
 // db.statehistory = require('./statehistory.model.js')(sequelize, Sequelize);
 // db.notification = require('./notification.model.js')(sequelize, Sequelize);
 
