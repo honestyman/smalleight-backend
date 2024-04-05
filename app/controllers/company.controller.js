@@ -3,6 +3,7 @@ const { format } = require('date-fns')
 const db = require('../models')
 const { query } = require('express-validator')
 const cookieSession = require('cookie-session')
+const { where } = require('sequelize')
 const Company = db.company
 const Client =db.client
 const Solvedissue = db.solvedissue
@@ -40,6 +41,9 @@ exports.processAnswers = async (req, res) => {
     let result = [];
     // step1--------------------
     const companys = await Company.findAll({
+      where: {
+        publishForm:"掲載+リード"
+      },
       include: Solvedissue
       // include: Expertise,
       // include: Startdate,
@@ -86,7 +90,8 @@ exports.processAnswers = async (req, res) => {
         companys[i] = await Company.findOne({
           include: Expertise,
           where: {
-            id: result[i].id
+            id: result[i].id,
+            publishForm:"掲載+リード"
           }
           // include: Startdate,
           // include: Pricesence,
@@ -118,6 +123,9 @@ exports.processAnswers = async (req, res) => {
       }
     } else {
       const companys = await Company.findAll({
+        where:{
+          publishForm:"掲載+リード"
+        },
         include: Expertise,
         // include: Startdate,
         // include: Pricesence,
@@ -160,7 +168,8 @@ exports.processAnswers = async (req, res) => {
         companys[i] = await Company.findOne({
           include: Startdate,
           where: {
-            id: result[i].id
+            id: result[i].id,
+            publishForm:"掲載+リード"
           }
           // include: Pricesence,
         });
@@ -186,7 +195,10 @@ exports.processAnswers = async (req, res) => {
       }
     } else {
       const companys = await Company.findAll({
-        include: Startdate,
+        where:{
+          publishForm:"掲載+リード"
+        },
+        include: Startdate
         // include: Pricesence,
       });
       if (companys && req.body.startDate) {
@@ -222,7 +234,8 @@ exports.processAnswers = async (req, res) => {
          companys[i] = await Company.findOne({
            include: Pricesence,
            where: {
-             id: result[i].id
+             id: result[i].id,
+             publishForm:"掲載+リード"
            }
            // include: Pricesence,
          });
@@ -248,7 +261,9 @@ exports.processAnswers = async (req, res) => {
        }
      } else {
        const companys = await Company.findAll({
-        //  include: Startdate,
+         where:{
+          publishForm:"掲載+リード"
+         },
          include: Pricesence
        });
        if (companys && req.body.budget) {
@@ -280,12 +295,16 @@ exports.processAnswers = async (req, res) => {
         result[i] = await Company.findOne({
           include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
           where: {
-            id: result[i].id
+            id: result[i].id,
+            publishForm:"掲載+リード"
           }
         });
       }
      }else{
       result = await Company.findAll({
+        where: {
+          publishForm:"掲載+リード"
+        },
         include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],    
       });
      }
@@ -356,6 +375,9 @@ exports.processAnswersTool = async (req, res) => {
     let result = [];
     // step1--------------------
     const companys = await Company.findAll({
+      where:{
+        publishForm:"掲載+リード"
+      },
       include: Tool
     });
     var result1Len = 0;
@@ -399,7 +421,8 @@ exports.processAnswersTool = async (req, res) => {
         companys[i] = await Company.findOne({
           include: Startdate,
           where: {
-            id: result[i].id
+            id: result[i].id,
+            publishForm:"掲載+リード"
           }
           // include: Pricesence,
         });
@@ -425,7 +448,10 @@ exports.processAnswersTool = async (req, res) => {
       }
     } else {
       const companys = await Company.findAll({
-        include: Startdate,
+        where:{
+          publishForm:"掲載+リード"
+        },
+        include: Startdate
         // include: Pricesence,
       });
       if (companys && req.body.startDate) {
@@ -461,7 +487,8 @@ exports.processAnswersTool = async (req, res) => {
          companys[i] = await Company.findOne({
            include: Pricesence,
            where: {
-             id: result[i].id
+             id: result[i].id,
+             publishForm:"掲載+リード"
            }
            // include: Pricesence,
          });
@@ -487,7 +514,9 @@ exports.processAnswersTool = async (req, res) => {
        }
      } else {
        const companys = await Company.findAll({
-        //  include: Startdate,
+         where:{
+          publishForm:"掲載+リード"
+        },
          include: Pricesence
        });
        if (companys && req.body.budget) {
@@ -519,12 +548,16 @@ exports.processAnswersTool = async (req, res) => {
         result[i] = await Company.findOne({
           include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
           where: {
-            id: result[i].id
+            id: result[i].id,
+            publishForm:"掲載+リード"
           }
         });
       }
      }else{
       result = await Company.findAll({
+        where:{
+          publishForm:"掲載+リード"
+        },
         include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],    
       });
      }
