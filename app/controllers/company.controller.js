@@ -4,6 +4,7 @@ const db = require('../models')
 const { query } = require('express-validator')
 const cookieSession = require('cookie-session')
 const { where } = require('sequelize')
+const { name } = require('ejs')
 const Company = db.company
 const Client =db.client
 const Solvedissue = db.solvedissue
@@ -699,9 +700,52 @@ exports.deleteOneCompany = async (req, res) => {
       where: {
         id: req.query.id
       },
+      include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
       order:[['id','DESC']],
     });
-    company.destroy();
+    if(company){
+        const campaigns = [];
+        for (let i = 0; i < company.campaigns.length; i++) {
+          campaigns[i] = await Campaign.findOne({
+            where: { text: company.campaigns[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeCampaign(([campaigns[i].id]));
+        }
+        const expertise = [];
+        for (let i = 0; i < company.expertises.length; i++) {
+          expertise[i] = await Expertise.findOne({
+            where: { text: company.expertises[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeExpertise(([expertise[i].id]));
+        }
+        const tools = [];
+        for (let i = 0; i < company.tools.length; i++) {
+          tools[i] = await Tool.findOne({
+            where: { text: company.tools[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeTool(([tools[i].id]));
+        }
+        const solvedissues = [];
+        for (let i = 0; i < company.solvedissues.length; i++) {
+          solvedissues[i] = await Solvedissue.findOne({
+            where: { text: company.solvedissues[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeSolvedissue(([solvedissues[i].id]));
+        }
+        const industryExperiences = [];
+        for (let i = 0; i < company.industryexperiences.length; i++) {
+          industryExperiences[i] = await Industryexperience.findOne({
+            where: { text: company.industryexperiences[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeIndustryexperience(([industryExperiences[i].id]));
+        }
+        company.destroy();
+    }
 
     return res.status(200).json({ message:"Success" })
   } catch (error) {
@@ -810,4 +854,224 @@ exports.getIndustryExperienceAll = async (req, res) => {
         message: err.message || '',
       })
     })
+}
+
+exports.addCompany = async (req, res) => {
+  console.log(req.body);
+  try {
+    const companies = await Company.findOne({
+      where:{
+        name: req.body.name
+      }
+    });
+    if(!companies){
+      const pricesence = await Pricesence.findOne({
+        where:{
+          text: req.body.pricesence
+        }
+      });
+      const startdate = await Startdate.findOne({
+        where:{
+          text: req.body.startdate
+        }
+      });    
+      const company = await Company.create({
+        name: req.body.name,
+        logo: req.body.logo,
+        title: req.body.title,
+        description: req.body.description,
+        representativeName: req.body.representativeName,
+        address: req.body.address,
+        establishedYear: req.body.establishedYear,
+        memberCount: req.body.memberCount,
+        publishForm: req.body.publishForm,
+        pricesenceId: pricesence.id,
+        startdateId: startdate.id
+      });
+      const campaigns = [];
+      for (let i = 0; i < req.body.campaigns.length; i++) {
+        campaigns[i] = await Campaign.findOne({
+          where: { text: req.body.campaigns[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addCampaign(campaigns[i], { through: { selfGranted: false } });
+      }
+  
+      const expertise = [];
+      for (let i = 0; i < req.body.expertise.length; i++) {
+        expertise[i] = await Expertise.findOne({
+          where: { text: req.body.expertise[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addExpertise(expertise[i], { through: { selfGranted: false } });
+      }
+      const tools = [];
+      for (let i = 0; i < req.body.tools.length; i++) {
+        tools[i] = await Tool.findOne({
+          where: { text: req.body.tools[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addTool(tools[i], { through: { selfGranted: false } });
+      }
+  
+      const solvedissues = [];
+      for (let i = 0; i < req.body.solvedissues.length; i++) {
+        solvedissues[i] = await Solvedissue.findOne({
+          where: { text: req.body.solvedissues[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addSolvedissue(solvedissues[i], { through: { selfGranted: false } });
+      }
+  
+      const industryExperiences = [];
+      for (let i = 0; i < req.body.industryExperiences.length; i++) {
+        industryExperiences[i] = await Industryexperience.findOne({
+          where: { text: req.body.industryExperiences[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addIndustryexperience(industryExperiences[i], { through: { selfGranted: false } });
+      }
+    }else{
+      return res.status(500).json({
+        message: "同じ名前の会社がすでに存在します。"
+      });  
+    }
+    
+
+    return res.status(200).json({
+      message:"success"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
+}
+
+exports.updateCompany = async (req, res) => {
+  console.log(req.body);
+  try {
+    const company = await Company.findOne({
+      where:{
+        id: req.body.id
+      },
+      include: [Pricesence, Startdate, Expertise, Solvedissue, Tool, Industryexperience, Campaign],
+    });
+    if(company){
+      const pricesence = await Pricesence.findOne({
+        where:{
+          text: req.body.pricesence
+        }
+      });
+      const startdate = await Startdate.findOne({
+        where:{
+          text: req.body.startdate
+        }
+      });    
+      
+        company.name = req.body.name,
+        // logo: req.body.logo,
+        company.title = req.body.title,
+        company.description = req.body.description,
+        company.representativeName = req.body.representativeName,
+        company.address = req.body.address,
+        company.establishedYear = req.body.establishedYear,
+        company.memberCount = req.body.memberCount,
+        company.publishForm = req.body.publishForm,
+        company.sales = req.body.sales,
+        company.pricesenceId = pricesence.id,
+        company.startdateId = startdate.id
+
+        if(req.body.logo){
+          company.logo=req.body.logo
+        }
+        company.save();
+
+        const campaigns = [];
+        for (let i = 0; i < company.campaigns.length; i++) {
+          campaigns[i] = await Campaign.findOne({
+            where: { text: company.campaigns[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeCampaign(([campaigns[i].id]));
+        }
+        for (let i = 0; i < req.body.campaigns.length; i++) {
+          campaigns[i] = await Campaign.findOne({
+            where: { text: req.body.campaigns[i] },
+            order: [['text', 'ASC']],
+          });
+          await company.addCampaign(campaigns[i], { through: { selfGranted: false } });
+        }
+        const expertise = [];
+        for (let i = 0; i < company.expertises.length; i++) {
+          expertise[i] = await Expertise.findOne({
+            where: { text: company.expertises[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeExpertise(([expertise[i].id]));
+        }
+        for (let i = 0; i < req.body.expertise.length; i++) {
+          expertise[i] = await Expertise.findOne({
+            where: { text: req.body.expertise[i] },
+            order: [['text', 'ASC']],
+          });
+          await company.addExpertise(expertise[i], { through: { selfGranted: false } });
+        }
+        const tools = [];
+        for (let i = 0; i < company.tools.length; i++) {
+          tools[i] = await Tool.findOne({
+            where: { text: company.tools[i].text },
+            order: [['text', 'ASC']],
+          });
+          await company.removeTool(([tools[i].id]));
+        }
+        for (let i = 0; i < req.body.tools.length; i++) {
+          tools[i] = await Tool.findOne({
+            where: { text: req.body.tools[i] },
+            order: [['text', 'ASC']],
+          });
+          await company.addTool(tools[i], { through: { selfGranted: false } });
+        }
+  
+      const solvedissues = [];
+      for (let i = 0; i < company.solvedissues.length; i++) {
+        solvedissues[i] = await Solvedissue.findOne({
+          where: { text: company.solvedissues[i].text },
+          order: [['text', 'ASC']],
+        });
+        await company.removeSolvedissue(([tools[i].id]));
+      }
+      for (let i = 0; i < req.body.solvedissues.length; i++) {
+        solvedissues[i] = await Solvedissue.findOne({
+          where: { text: req.body.solvedissues[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addSolvedissue(solvedissues[i], { through: { selfGranted: false } });
+      }
+  
+      const industryExperiences = [];
+      for (let i = 0; i < company.industryexperiences.length; i++) {
+        industryExperiences[i] = await Industryexperience.findOne({
+          where: { text: company.industryexperiences[i].text },
+          order: [['text', 'ASC']],
+        });
+        await company.removeIndustryexperience(([industryExperiences[i].id]));
+      }
+      for (let i = 0; i < req.body.industryExperiences.length; i++) {
+        industryExperiences[i] = await Industryexperience.findOne({
+          where: { text: req.body.industryExperiences[i] },
+          order: [['text', 'ASC']],
+        });
+        await company.addIndustryexperience(industryExperiences[i], { through: { selfGranted: false } });
+      }
+    }
+
+    return res.status(200).json({
+      message:"success"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || ''
+    })
+  }
 }

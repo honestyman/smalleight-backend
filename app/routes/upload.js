@@ -9,8 +9,7 @@ const moment = require('moment-timezone')
 const { check, validationResult } = require("express-validator");
 
 const db = require('../models');
-const User = db.user;
-const Item=db.item;
+const Company=db.company;
 
 const storage_image = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -19,20 +18,19 @@ const storage_image = multer.diskStorage({
   },
   filename: async(req, file, cb) => {
         // Generate a unique filename for the uploaded file
-    const item = await Item.findOne({
+    const company = await Company.findOne({
       where: {
-        main_image_url: '/img/'+file.originalname
+        logo: file.originalname
       }
     });
     cb(null, Date.now().toString().slice(0,11)+file.originalname);
-    item.main_image_url='/img/'+Date.now().toString().slice(0,11)+file.originalname;
-    item.save();
+    company.logo = Date.now().toString().slice(0,11)+file.originalname;
+    company.save();
   }
-});
-const maxSize = 1 * 500 * 500;  
-const upload_image = multer({
+});  
+
+const upload_Logo = multer({
    storage: storage_image,
-   limits: { fileSize: maxSize },
    fileFilter: function (req, file, cb) {
     // Set the filetypes, it is optional
       var filetypes = /jpeg|jpg|png/;
@@ -51,28 +49,28 @@ const upload_image = multer({
   }, 
   }).single("file");
 
-  const storage_sound = multer.diskStorage({
-    destination: (req, file, cb) => {
-      // Specify the directory where the file will be saved
-      cb(null, './uploads/sound/');
-    },
-    filename: async(req, file, cb) => {
-      // Generate a unique filename for the uploaded file
-      // console.log("==========>",date);
-      const item = await Item.findOne({
-        where: {
-          filename: file.originalname
-        },
-      });
-      cb(null, Date.now().toString().slice(0,11)+file.originalname);
-      item.filename=Date.now().toString().slice(0,11)+file.originalname;
-      item.save();
-    }
-  });
+  // const storage_sound = multer.diskStorage({
+  //   destination: (req, file, cb) => {
+  //     // Specify the directory where the file will be saved
+  //     cb(null, './uploads/sound/');
+  //   },
+  //   filename: async(req, file, cb) => {
+  //     // Generate a unique filename for the uploaded file
+  //     // console.log("==========>",date);
+  //     const item = await Item.findOne({
+  //       where: {
+  //         filename: file.originalname
+  //       },
+  //     });
+  //     cb(null, Date.now().toString().slice(0,11)+file.originalname);
+  //     item.filename=Date.now().toString().slice(0,11)+file.originalname;
+  //     item.save();
+  //   }
+  // });
 
-  const upload_sound = multer({
-     storage: storage_sound, 
-    }).single("sound");
+  // const upload_sound = multer({
+  //    storage: storage_sound, 
+  //   }).single("sound");
 // @route       GET api/auth
 // @desc        Get logged in user
 // @access      Private
@@ -89,8 +87,8 @@ const upload_image = multer({
 // @route       POST api/auth
 // @desc        Auth user & get Token
 // @access      Public
-router.post("/addimage", function(req, res, next) {
-  upload_image(req, res, function (err) {
+router.post("/add_logoimage", function(req, res, next) {
+  upload_Logo(req, res, function (err) {
     if (err) {
         // ERROR occurred (here it can be occurred due
         // to uploading image of size greater than
@@ -98,7 +96,7 @@ router.post("/addimage", function(req, res, next) {
         res.send(err);
     } else {
         // SUCCESS, image successfully uploaded
-        res.send("Success, Image uploaded!");
+        return res.status(200).json({ message: "Success!" });
     }
 });
   // Error MiddleWare for multer file upload, so if any
@@ -106,21 +104,21 @@ router.post("/addimage", function(req, res, next) {
   
 });
 
-router.post("/addsound", function(req, res, next) {
-  upload_sound(req, res, function (err) {
-    if (err) {
-        // ERROR occurred (here it can be occurred due
-        // to uploading image of size greater than
-        // 1MB or uploading different file type)
-        res.send(err);
-    } else {
-        // SUCCESS, image successfully uploaded
-        res.send("Success, Sound uploaded!");
-    }
-});
-  // Error MiddleWare for multer file upload, so if any
-  // error occurs, the image would not be uploaded!
+// router.post("/addsound", function(req, res, next) {
+//   upload_sound(req, res, function (err) {
+//     if (err) {
+//         // ERROR occurred (here it can be occurred due
+//         // to uploading image of size greater than
+//         // 1MB or uploading different file type)
+//         res.send(err);
+//     } else {
+//         // SUCCESS, image successfully uploaded
+//         res.send("Success, Sound uploaded!");
+//     }
+// });
+//   // Error MiddleWare for multer file upload, so if any
+//   // error occurs, the image would not be uploaded!
   
-});
+// });
 
 module.exports = router;

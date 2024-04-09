@@ -25,7 +25,8 @@ module.exports = app => {
   router.get('/allstartdate', companys.getStartDateAll);
   router.get('/allindustryexperience', companys.getIndustryExperienceAll);
 
-  // router.get('/getallcategory', items.getAllCategory);
+  router.post('/addcompany', companys.addCompany);
+  router.post('/updatecompany', companys.updateCompany);
   // router.get('/getlike', items.getLike);
   // router.get('/getonelike', items.getOneLike);
   // router.get('/getplay', items.getPlay);

@@ -55,7 +55,7 @@ require("./app/routes/news.routes")(app);
 
 app.use("/api/auth", require('./app/routes/auth'));
 // app.use("/api/user", require('./app/routes/users'));
-// app.use("/api/item", require('./app/routes/item'));
+app.use("/api/upload", require('./app/routes/upload'));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
