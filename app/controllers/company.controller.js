@@ -5,6 +5,10 @@ const { query } = require('express-validator')
 const cookieSession = require('cookie-session')
 const { where } = require('sequelize')
 const { name } = require('ejs')
+
+const fs= require('fs')
+const path = require('path');
+
 const Company = db.company
 const Client =db.client
 const Solvedissue = db.solvedissue
@@ -744,6 +748,14 @@ exports.deleteOneCompany = async (req, res) => {
           });
           await company.removeIndustryexperience(([industryExperiences[i].id]));
         }
+        const imagePath = path.join(__dirname, '../../uploads/img', company.logo);
+          fs.unlink(imagePath, (error) => {
+            if (error) {
+              console.error('Error deleting image:', error);
+            } else {
+              console.log('Image deleted successfully');
+            }
+          });
         company.destroy();
     }
 
@@ -936,8 +948,6 @@ exports.addCompany = async (req, res) => {
         message: "同じ名前の会社がすでに存在します。"
       });  
     }
-    
-
     return res.status(200).json({
       message:"success"
     });

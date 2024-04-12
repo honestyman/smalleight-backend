@@ -9,6 +9,9 @@ module.exports = app => {
   router.get('/', columns.getColumnsAll);
   router.get('/allcategory', columns.getColumnsCategoryAll);
   router.get('/onecolumn', columns.getOneColumn);
+  router.post('/addcolumn', columns.addOneColumn);
+  router.delete('/deleteonecolumn', columns.deleteOneColumn);
+
   // router.post('/updateintroduction', introductions.updateIntroduction);
   
   // router.post('/add', introductions.addIntroduction);

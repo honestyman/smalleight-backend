@@ -9,9 +9,10 @@ const moment = require('moment-timezone')
 const { check, validationResult } = require("express-validator");
 
 const db = require('../models');
-const Company=db.company;
+const Company = db.company;
+const Column = db.column;
 
-const storage_image = multer.diskStorage({
+const storageCompanyLogo = multer.diskStorage({
   destination: (req, file, cb) => {
     // Specify the directory where the file will be saved
     cb(null, './uploads/img/');
@@ -30,10 +31,10 @@ const storage_image = multer.diskStorage({
 });  
 
 const upload_Logo = multer({
-   storage: storage_image,
+   storage: storageCompanyLogo,
    fileFilter: function (req, file, cb) {
     // Set the filetypes, it is optional
-      var filetypes = /jpeg|jpg|png/;
+      var filetypes = /jpeg|jpg|png|webp/;
       var mimetype = filetypes.test(file.mimetype);
       var extname = filetypes.test(
           path.extname(file.originalname).toLowerCase()
@@ -48,6 +49,45 @@ const upload_Logo = multer({
       );
   }, 
   }).single("file");
+
+  const storageColumnThumbnail = multer.diskStorage({
+    destination: (req, file, cb) => {
+      // Specify the directory where the file will be saved
+      cb(null, './uploads/img/');
+    },
+    filename: async(req, file, cb) => {
+          // Generate a unique filename for the uploaded file
+      const column = await Column.findOne({
+        where: {
+          thumbnail: file.originalname
+        }
+      });
+      cb(null, Date.now().toString().slice(0,11)+file.originalname);
+      column.thumbnail = Date.now().toString().slice(0,11)+file.originalname;
+      column.save();
+    }
+  });  
+  
+  const upload_Thumbnail = multer({
+     storage: storageColumnThumbnail,
+     fileFilter: function (req, file, cb) {
+      // Set the filetypes, it is optional
+        var filetypes = /jpeg|jpg|png|webp/;
+        var mimetype = filetypes.test(file.mimetype);
+        var extname = filetypes.test(
+            path.extname(file.originalname).toLowerCase()
+        );
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(
+            "Error: File upload only supports the " +
+                "following filetypes - " +
+                filetypes
+        );
+    }, 
+    }).single("file");
+  
 
   // const storage_sound = multer.diskStorage({
   //   destination: (req, file, cb) => {
@@ -90,18 +130,21 @@ const upload_Logo = multer({
 router.post("/add_logoimage", function(req, res, next) {
   upload_Logo(req, res, function (err) {
     if (err) {
-        // ERROR occurred (here it can be occurred due
-        // to uploading image of size greater than
-        // 1MB or uploading different file type)
         res.send(err);
     } else {
-        // SUCCESS, image successfully uploaded
         return res.status(200).json({ message: "Success!" });
     }
+  });
 });
-  // Error MiddleWare for multer file upload, so if any
-  // error occurs, the image would not be uploaded!
-  
+
+router.post("/add_columnthumbnail", function(req, res, next) {
+  upload_Thumbnail(req, res, function (err) {
+    if (err) {
+        res.send(err);
+    } else {
+        return res.status(200).json({ message: "Success!" });
+    }
+  });
 });
 
 // router.post("/addsound", function(req, res, next) {
