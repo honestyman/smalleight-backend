@@ -9,7 +9,7 @@ const Columnsecondchild = db.columnsecondchild
 const Columncategory = db.columncategory
 
 const fs= require('fs')
-const path = require('path');
+const path = require('path')
 
 // const CampaignInfo = db.campaignInfo
 // const AdgroupInfo = db.adgroupInfo
@@ -106,9 +106,12 @@ exports.addOneColumn = async(req, res) => {
       for(let i=0; i < Math.max(req.body.firstTitleValues.length, req.body.firstContentValues.length); i++){
         var columnfirstChild = await Columnfirstchild.create({
           title: req.body.firstTitleValues[i].value,
-          description: req.body.firstContentValues[i].value
+          description: req.body.firstContentValues[i].value,
+          image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null
         });
         await column.addColumnfirstchild(columnfirstChild, { through: { selfGranted: false } });
+        // console.log("======>",req.body.firstImage[i].image);
+        
         var secondTitleValues=[];
         for(let j=0;j<req.body.secondTitleValues.length; j++){
           if(req.body.secondTitleValues[j].key[0]==req.body.firstTitleValues[i].key){
@@ -124,10 +127,19 @@ exports.addOneColumn = async(req, res) => {
           }
         }
         console.log("secondContentValues=========>",secondContentValues);
+
+        var secondImageName=[];
+        for(let j=0;j<req.body.secondImageName.length;j++){
+          if(req.body.secondImageName[j].key[0]==req.body.firstTitleValues[i].key){
+            secondImageName.push(req.body.secondImageName[j]);
+          }
+        }
+
         for(let k=0; k<Math.max(secondTitleValues.length, secondContentValues.length); k++){
           var columnsecondChild = await Columnsecondchild.create({
             title: secondTitleValues[k].value,
             description: secondContentValues[k].value,
+            image: secondImageName[k]?secondImageName[k].image:null
           })
           await columnfirstChild.addColumnsecondchild(columnsecondChild, { through: { selfGranted: false } })
         }
@@ -144,6 +156,120 @@ exports.addOneColumn = async(req, res) => {
   } catch (error) {
     
   }
+}
+
+exports.updateOneColumn = async(req, res) => {
+  console.log(req.body)
+  try {
+    const column = await Column.findOne({
+      where:{
+        id:req.body.id
+      },
+      include: [
+        {
+          model:Columnfirstchild,
+          include: Columnsecondchild
+        },Columncategory
+      ] ,
+    });
+    if(column){
+        column.title=req.body.title;
+        column.description=req.body.description;
+        if(req.body.thumbnail){
+          column.thumbnail=req.body.thumbnail;
+        }
+        column.save();
+
+        const columncategorys = [];
+        for (let i = 0; i < column.columncategories.length; i++) {
+          columncategorys[i] = await Columncategory.findOne({
+            where: { id: column.columncategories[i].id },
+            order: [['id', 'ASC']],
+          });
+          await column.removeColumncategory(columncategorys[i].id);
+        }
+        for (let i = 0; i < req.body.columnCategories.length; i++) {
+          columncategorys[i] = await Columncategory.findOne({
+            where: { text: req.body.columnCategories[i] },
+            order: [['text', 'ASC']],
+          });
+          await column.addColumncategory(columncategorys[i], { through: { selfGranted: false } });
+        }
+
+        if(column.columnfirstchildren){
+          for (let i = 0; i < column.columnfirstchildren.length; i++) {
+            const columnfirstchildren = await Columnfirstchild.findOne({
+              where: { id: column.columnfirstchildren[i].id },
+              include: Columnsecondchild,
+              order: [['id', 'ASC']],
+            });
+            if(columnfirstchildren.columnsecondchildren){
+              // console.log("========>",columnfirstchildren.columnsecondchildren)
+              for(let j=0; j<columnfirstchildren.columnsecondchildren.length; j++){
+                const columnsecondchildren = await Columnsecondchild.findOne({
+                  where: {
+                    id: columnfirstchildren.columnsecondchildren[j].id
+                  },
+                  order: [['id', 'ASC']],
+                });
+                columnsecondchildren.destroy();
+              }
+            }
+            columnfirstchildren.destroy();
+          }
+        }
+        if(req.body.firstTitleValues || req.body.firstContentValues){
+          for(let i=0; i < Math.max(req.body.firstTitleValues.length, req.body.firstContentValues.length); i++){
+            var columnfirstChild = await Columnfirstchild.create({
+              title: req.body.firstTitleValues[i].value,
+              description: req.body.firstContentValues[i].value,
+              image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null
+            });
+            await column.addColumnfirstchild(columnfirstChild, { through: { selfGranted: false } });
+            // console.log("======>",req.body.firstImage[i].image);
+            
+            var secondTitleValues=[];
+            for(let j=0;j<req.body.secondTitleValues.length; j++){
+              if(req.body.secondTitleValues[j].key[0]==req.body.firstTitleValues[i].key){
+                secondTitleValues.push(req.body.secondTitleValues[j]);
+              }
+            }
+            console.log("secondTitleValues=====>",secondTitleValues)
+      
+            var secondContentValues=[];
+            for(let j=0;j<req.body.secondContentValues.length;j++){
+              if(req.body.secondContentValues[j].key[0]==req.body.firstTitleValues[i].key){
+                secondContentValues.push(req.body.secondContentValues[j]);
+              }
+            }
+            console.log("secondContentValues=========>",secondContentValues);
+      
+            var secondImageName=[];
+            for(let j=0;j<req.body.secondImageName.length;j++){
+              if(req.body.secondImageName[j].key[0]==req.body.firstTitleValues[i].key){
+                secondImageName.push(req.body.secondImageName[j]);
+              }
+            }
+      
+            for(let k=0; k<Math.max(secondTitleValues.length, secondContentValues.length); k++){
+              var columnsecondChild = await Columnsecondchild.create({
+                title: secondTitleValues[k].value,
+                description: secondContentValues[k].value,
+                image: secondImageName[k]?secondImageName[k].image:null
+              })
+              await columnfirstChild.addColumnsecondchild(columnsecondChild, { through: { selfGranted: false } })
+            }
+          }
+        }
+        return res.status(200).json({
+          message:"success"
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: error.message || ''
+      })
+    }
 }
 
 exports.deleteOneColumn = async (req, res) => {
@@ -187,8 +313,28 @@ exports.deleteOneColumn = async (req, res) => {
                   },
                   order: [['id', 'ASC']],
                 });
+                if(columnsecondchildren.image){
+                  const secondimagePath = path.join(__dirname, '../../uploads/img', columnsecondchildren.image);
+                  fs.unlink(secondimagePath, (error) => {
+                    if (error) {
+                      console.error('Error deleting image:', error);
+                    } else {
+                      console.log('Image deleted successfully');
+                    }
+                  });
+                }
                 columnsecondchildren.destroy();
               }
+            }
+            if(columnfirstchildren.image){
+              const firstimagePath = path.join(__dirname, '../../uploads/img', columnfirstchildren.image);
+              fs.unlink(firstimagePath, (error) => {
+                if (error) {
+                  console.error('Error deleting image:', error);
+                } else {
+                  console.log('Image deleted successfully');
+                }
+              });
             }
             columnfirstchildren.destroy();
           }
