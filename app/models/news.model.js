@@ -1,8 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
   const News = sequelize.define("news", {
-    publishDate: {
-      type: Sequelize.DATE,
-    },
     image: {
       type: Sequelize.STRING,
     },
