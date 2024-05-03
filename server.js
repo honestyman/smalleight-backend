@@ -51,7 +51,7 @@ require("./app/routes/company.routes")(app);
 require("./app/routes/column.routes")(app);
 require("./app/routes/client.routes")(app);
 require("./app/routes/news.routes")(app);
-// require("./app/routes/notification.routes")(app);
+require("./app/routes/tools.routes")(app);
 
 app.use("/api/auth", require('./app/routes/auth'));
 // app.use("/api/user", require('./app/routes/users'));
