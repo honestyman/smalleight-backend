@@ -7,6 +7,7 @@ const { ONE_SIGNAL_CONFIG }=require("../config/app.config");
 const Client = db.client
 const Query = db.query
 const WantedCompany = db.wantedcompany
+const Like = db.like
 
 const Op = db.Sequelize.Op
 const Sequelize = db.Sequelize
@@ -26,6 +27,38 @@ exports.getAll = (req, res) => {
         message: err.message || '',
       })
     })
+}
+
+exports.getCounts = async (req, res) => {
+  try {
+    const like=await Like.findAll();
+    res.json(like[0].count)
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || '',
+    })
+  }
+}
+
+exports.addLike = async (req, res) => {
+  try {
+    const like = await Like.findAll();
+    console.log(like);
+    if(like.length > 0){
+      like[0].count = like[0].count+1;
+      like[0].save();
+    }else{
+      await Like.create({
+          count:1
+        }
+      );
+    }
+    res.json( {message: "success"})
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || '',
+    })
+  }
 }
 
 exports.addQuery = async (req, res) => {

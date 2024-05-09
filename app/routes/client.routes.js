@@ -8,7 +8,9 @@ module.exports = app => {
 
   // Retrieve all campaigns
   router.get('/', client.getAll);
+  router.get('/getcounts', client.getCounts);
   router.get('/getoneclient', client.getOneClient);
+  router.post('/addlike', client.addLike);
   router.post('/postquery', auth, client.addQuery);
   router.post('/postwanted', auth, client.addWantedCompany);
 

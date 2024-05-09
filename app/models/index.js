@@ -24,6 +24,7 @@ db.expertise = require('./expertise.model.js')(sequelize, Sequelize);
 db.tool = require('./tool.model.js')(sequelize, Sequelize);
 db.industryexperience = require('./industryexperience.model.js')(sequelize, Sequelize);
 db.startdate = require('./startdate.model.js')(sequelize, Sequelize);
+db.like = require('./like.model.js')(sequelize, Sequelize);
 
 db.column = require('./column.model.js')(sequelize, Sequelize);
 db.columnfirstchild = require('./columnfirstchild.model.js')(sequelize, Sequelize);
