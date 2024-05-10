@@ -1,8 +1,9 @@
 const axios = require('axios')
 const { format } = require('date-fns')
 const db = require('../models')
-const OneSignal = require('onesignal-node');
-const { ONE_SIGNAL_CONFIG }=require("../config/app.config");
+require('dotenv').config()
+const config = require('config')
+const nodemailer = require('nodemailer')
 
 const Client = db.client
 const Query = db.query
@@ -62,9 +63,8 @@ exports.addLike = async (req, res) => {
 }
 
 exports.addQuery = async (req, res) => {
-  console.log(req.body);  
-  
   try {
+    console.log(req.body);  
     const query = await Query.create({
       kind: req.body.kind,
       name: req.body.name,
@@ -72,9 +72,42 @@ exports.addQuery = async (req, res) => {
       email: req.body.email,
       questionContent: req.body.questionContent
     });
-    
-    return res.status(200).json({ message: "success" });
+    try {
+      const transpoter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+      const mailContigrations = {
+        from: process.env.FROM_EMAIL,
+        to: "poonhaorui@gmail.com",
+        subject: "お問い合わせ",
+        // text: `お問い合わせ種類:\n
+        //        ${req.body.kind}\n 
+        //        会社名: \n
+        //        ${req.body.company}\n
+        //        お名前: \n
+        //        ${req.body.name}\n
+        //        メールアドレス: \n
+        //        ${req.body.email}\n
+        //        問い合わせ内容: \n
+        //        ${req.body.questionContent}`
+        text:`hello`
+      };
+      transpoter.sendMail(mailContigrations, function (error, info) {
+        if (error) throw Error(error);
+        console.log('Email Sent Successfully');
+        console.log(info);
+      });
+      console.log("result:", transpoter);
+    } catch (error) {
+      console.log('mail sending error>>>', error);
+    }
 
+    return res.status(200).json({ message: "success" });
   } catch (error) {
     res.status(500).json({
       message: error.message || ''
