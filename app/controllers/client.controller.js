@@ -83,7 +83,7 @@ exports.addQuery = async (req, res) => {
       });
       const mailContigrations = {
         from: process.env.FROM_EMAIL,
-        to: "poonhaorui@gmail.com",
+        to: req.body.email,
         subject: "お問い合わせ",
         // text: `お問い合わせ種類:\n
         //        ${req.body.kind}\n 
