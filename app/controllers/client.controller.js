@@ -82,20 +82,19 @@ exports.addQuery = async (req, res) => {
         },
       });
       const mailContigrations = {
-        from: process.env.FROM_EMAIL,
-        to: req.body.email,
-        subject: "お問い合わせ",
-        // text: `お問い合わせ種類:\n
-        //        ${req.body.kind}\n 
-        //        会社名: \n
-        //        ${req.body.company}\n
-        //        お名前: \n
-        //        ${req.body.name}\n
-        //        メールアドレス: \n
-        //        ${req.body.email}\n
-        //        問い合わせ内容: \n
-        //        ${req.body.questionContent}`
-        text:`hello`
+        from: req.query.email,
+        to: "poonhaorui@gmail.com",
+        subject: "SmallEight",
+        text: `お問い合わせ種類:\n
+               ${req.body.kind}\n 
+               会社名: \n
+               ${req.body.company}\n
+               お名前: \n
+               ${req.body.name}\n
+               メールアドレス: \n
+               ${req.body.email}\n
+               問い合わせ内容: \n
+               ${req.body.questionContent}`
       };
       transpoter.sendMail(mailContigrations, function (error, info) {
         if (error) throw Error(error);
