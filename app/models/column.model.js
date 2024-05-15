@@ -3,6 +3,9 @@ module.exports = (sequelize, Sequelize) => {
     thumbnail: {
       type: Sequelize.STRING,
     },
+    alt: {
+      type: Sequelize.STRING,
+    },
     title:{
       type: Sequelize.STRING,
     },

@@ -90,7 +90,8 @@ exports.addOneColumn = async(req, res) => {
       const column = await Column.create({
         title: req.body.title,
         description: req.body.description,
-        thumbnail: req.body.thumbnail
+        thumbnail: req.body.thumbnail,
+        alt: req.body.alt
       });
       const columncategorys = [];
       for (let i = 0; i < req.body.columnCategories.length; i++) {
@@ -107,7 +108,8 @@ exports.addOneColumn = async(req, res) => {
         var columnfirstChild = await Columnfirstchild.create({
           title: req.body.firstTitleValues[i].value,
           description: req.body.firstContentValues[i].value,
-          image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null
+          image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null,
+          alt: req.body.firstAlt[i]?req.body.firstAlt[i].value:""
         });
         await column.addColumnfirstchild(columnfirstChild, { through: { selfGranted: false } });
         // console.log("======>",req.body.firstImage[i].image);
@@ -135,11 +137,19 @@ exports.addOneColumn = async(req, res) => {
           }
         }
 
+        var secondAlt=[];
+        for(let j=0;j<req.body.secondAlt.length;j++){
+          if(req.body.secondAlt[j].key[0]==req.body.firstTitleValues[i].key){
+            secondAlt.push(req.body.secondAlt[j]);
+          }
+        }
+
         for(let k=0; k<Math.max(secondTitleValues.length, secondContentValues.length); k++){
           var columnsecondChild = await Columnsecondchild.create({
             title: secondTitleValues[k].value,
             description: secondContentValues[k].value,
-            image: secondImageName[k]?secondImageName[k].image:null
+            image: secondImageName[k]?secondImageName[k].image:null,
+            alt: secondAlt[k]?secondAlt[k].value:""
           })
           await columnfirstChild.addColumnsecondchild(columnsecondChild, { through: { selfGranted: false } })
         }
@@ -175,6 +185,7 @@ exports.updateOneColumn = async(req, res) => {
     if(column){
         column.title=req.body.title;
         column.description=req.body.description;
+        column.alt=req.body.alt;
         if(req.body.thumbnail){
           column.thumbnail=req.body.thumbnail;
         }
@@ -223,7 +234,8 @@ exports.updateOneColumn = async(req, res) => {
             var columnfirstChild = await Columnfirstchild.create({
               title: req.body.firstTitleValues[i].value,
               description: req.body.firstContentValues[i].value,
-              image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null
+              image:req.body.firstImageName[i]?req.body.firstImageName[i].image:null,
+              alt:req.body.firstAlt[i]?req.body.firstAlt[i].value:""
             });
             await column.addColumnfirstchild(columnfirstChild, { through: { selfGranted: false } });
             // console.log("======>",req.body.firstImage[i].image);
@@ -250,12 +262,20 @@ exports.updateOneColumn = async(req, res) => {
                 secondImageName.push(req.body.secondImageName[j]);
               }
             }
+
+            var secondAlt=[];
+            for(let j=0;j<req.body.secondAlt.length;j++){
+              if(req.body.secondAlt[j].key[0]==req.body.firstTitleValues[i].key){
+                secondAlt.push(req.body.secondAlt[j]);
+              }
+            }
       
             for(let k=0; k<Math.max(secondTitleValues.length, secondContentValues.length); k++){
               var columnsecondChild = await Columnsecondchild.create({
                 title: secondTitleValues[k].value,
                 description: secondContentValues[k].value,
-                image: secondImageName[k]?secondImageName[k].image:null
+                image: secondImageName[k]?secondImageName[k].image:null,
+                alt: secondAlt[k]?secondAlt[k].value:"",
               })
               await columnfirstChild.addColumnsecondchild(columnsecondChild, { through: { selfGranted: false } })
             }
