@@ -11,16 +11,46 @@ const WantedCompany = db.wantedcompany
 const Op = db.Sequelize.Op
 const Sequelize = db.Sequelize
 var request = 	require('request');
+const cheerio = require('cheerio');
+const { response } = require('express');
 
 // Retrieve all campaigns
 exports.getData = async(req, res) => {
   try {
     const url = req.query.url; // Get URL from query parameters
     const response = await axios.get(url);
+    console.log(response.data);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
+}
+
+exports.getOgp = async(req, res) => {
+      try {
+        const url = req.body.url;
+
+        const { data } = await axios.get(url);
+        // console.log(response.data);
+        const $ = cheerio.load(data);
+
+        const ogp = {
+          title: $('meta[property="og:title"]').attr('content') || '',
+          description: $('meta[property="og:description"]').attr('content') || '',
+          image: $('meta[property="og:image"]').attr('content') || '',
+          twitterTitle: $('meta[name="twitter:title"]').attr('content') || '',
+          twitterDescription: $('meta[name="twitter:description"]').attr('content') || '',
+          twitterImage: $('meta[name="twitter:image"]').attr('content') || '',
+          lineTitle: $('meta[property="og:title"]').attr('content') || '',
+          lineDescription: $('meta[property="og:description"]').attr('content') || '',
+          lineImage: $('meta[property="og:image"]').attr('content') || '' 
+        };
+
+        res.json(ogp);
+        // res.json(response.data)
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch the URL' });
+    }
 }
 
 exports.addQuery = async (req, res) => {

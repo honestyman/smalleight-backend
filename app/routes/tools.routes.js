@@ -8,6 +8,7 @@ module.exports = app => {
 
   // Retrieve all campaigns
   router.get('/getdata', tools.getData);  
+  router.post('/fetch-ogp', tools.getOgp);  
 
 
   app.use("/api/tools", router);
