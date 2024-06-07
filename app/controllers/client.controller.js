@@ -74,8 +74,9 @@ exports.addQuery = async (req, res) => {
     });
     try {
       const transpoter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
+        // host: process.env.EMAIL_HOST,
+        // port: process.env.EMAIL_PORT,
+        service: process.env.EMAIL_USER,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD,
