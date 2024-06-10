@@ -82,7 +82,7 @@ exports.addQuery = async (req, res) => {
         },
       });
       const mailContigrations = {
-        from: req.query.email,
+        from: req.body.email,
         to: "poonhaorui@gmail.com",
         subject: "SmallEight",
         text: `お問い合わせ種類:\n
