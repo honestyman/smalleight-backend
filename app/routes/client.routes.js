@@ -13,10 +13,6 @@ module.exports = app => {
   router.post('/addlike', client.addLike);
   router.post('/postquery', auth, client.addQuery);
   router.post('/postwanted', auth, client.addWantedCompany);
-
-  // // router.get('/sendnotification', notification.sendNotification);
-  
-  // router.post('/updatenotification', notification.updateNotification);
   router.delete('/deleteoneclient', client.deleteOne);  
 
 

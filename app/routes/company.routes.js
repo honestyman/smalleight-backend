@@ -27,32 +27,6 @@ module.exports = app => {
 
   router.post('/addcompany', companys.addCompany);
   router.post('/updatecompany', companys.updateCompany);
-  // router.get('/getlike', items.getLike);
-  // router.get('/getonelike', items.getOneLike);
-  // router.get('/getplay', items.getPlay);
-  // router.get('/getdownload', items.getDownload);
-  // router.post('/download', items.addDownload);
-  // router.post('/play', items.addPlays);
-  // router.get('/search', items.getContentSearch);
-  // router.get('/en_search', items.getEnContentSearch);
-  // router.get('/category_search', items.getCategorySearch);
-  // router.get('/tab_search', items.getTabSearch);
-  // router.post('/addgive', items.addGive);
-
-  // -------admin----------
-  // router.post('/additem_video', items.addItemVideo);
-  // router.post('/additem_sound', items.addItemSound);
-  // router.post('/updateitem_video', items.updateItemVideo);
-  // router.post('/updateitem_sound', items.updateItemSound);
-  // router.post('/addtab', items.addTab);
-  // router.get('/getoneitem', items.getOneItem);
-  // router.delete('/deleteoneitem', items.deleteOneItem);
-  // router.delete('/deletetag', items.deleteTag);
-  // router.get('/getalltags', items.getAllTags);
-  // router.get('/getonetag', items.getOneTag);
-  // router.post('/updatetag', items.updateTag);
-
-  // router.get('/getcategory', items.getAllCategory);
 
   app.use("/api/companys", router);
 }

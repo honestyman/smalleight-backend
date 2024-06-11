@@ -13,11 +13,5 @@ module.exports = app => {
   router.post('/updatecolumn', columns.updateOneColumn);
   router.delete('/deleteonecolumn', columns.deleteOneColumn);
 
-  // router.post('/updateintroduction', introductions.updateIntroduction);
-  
-  // router.post('/add', introductions.addIntroduction);
-  // router.delete('/delete', introductions.deleteOneItem);  
-
-
   app.use("/api/columns", router);
 }
