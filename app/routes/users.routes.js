@@ -12,20 +12,5 @@ module.exports = app => {
   // Retrieve all campaigns
   router.get('/getall', users.getAll);
 
-  router.get('/getall_subscription', users.getAllSub);
-  router.get('/getgivelist', users.getAllGiveList);
-
-  router.get('/getone_reason', users.getOneReason);
-  router.get('/getone_introduction', users.getOneIntroduction);
-  router.get('/getstatus', users.getStatus);
-  router.get('/get_tiping', users.getTiping);
-  router.get('/getname', users.getName);
-  router.post('/plan', users.addPlan);
-  router.post('/notification', users.setNotification);
-  router.post('/verify', users.emailVerify);
-
-  router.delete('/delete', users.accountDelete);
-  router.delete('/onlydelete', users.accountOnlyDelete);
-
   app.use("/api/users", router);
 }
